@@ -44,6 +44,7 @@ ggplot(all_data, aes(x = playlist_name, y = tempo, color = playlist_name)) +
        caption = "Portfolio Laurens Krook (13176439)") + 
   theme(legend.position = "None")
 ```
+\
 The second visualization shows the progression of tempo over the playlist. On the x axis here the songs are numerically represented in playlist order. On the y axis, the tempo is shown. Also in this visualization it is noticeable that the playlists Housewerk and Technobunker have a better distribution of tempo compared to Dance Rising and Mint. In the latter playlists, the tempo is more dispersed
 ```{r}
 ggplot(all_data, aes(x = number_order, y= tempo, color = playlist_name)) + 
@@ -55,6 +56,7 @@ ggplot(all_data, aes(x = number_order, y= tempo, color = playlist_name)) +
        caption = "Portfolio Laurens Krook (13176439)") + 
   theme(legend.position = "None")
 ```
+\
 The last visualization shows the pitch of the different songs. The reason this visualization was chosen is because it is important for DJs to observe pitch when mixing songs. The outer ring shows the keys. The color and deflection of the bars shows the number of songs in this key. If the visualization shows that the songs have an even distribution across the key, this may mean that the key is observed when songs are mixed. In the visualization this can be clearly seen with the playlists Mint and Housewerk. 
 
 ```{r}
