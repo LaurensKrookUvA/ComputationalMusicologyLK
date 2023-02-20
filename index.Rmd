@@ -12,6 +12,7 @@ library(spotifyr)
 library(dplyr)
 library(ggplot2)
 ```
+This portfolio looks at the relationship between Spotify's Automix functionality and the musical corresponding mix components used in the DJ industry to smoothly transition songs. The automix playlists used for this portfolio are HouseWerk, TechnoBunker, Mint and Dance Rising. The music contained in the playlist is best classified under House music. In subcategory the Housewerk playlist contains techhouse, TechnoBunker techno, DanceRising and Mint dance pop. The interest in this comparison came from being a DJ myself. In the DJ world, mainly 2 components are used that are important for a transition between two songs. These are the tempo of the songs and the pitch (key) that the mixing songs are in. It will be investigated whether these components are also used by the automix functionality. This will focus on the order of the songs in the playlist. The shuffle functionality will be left out.  It may also turn out that the functionality is completely random. Looking at the HouseWerk playlist, the first analysis can be made of the songs that are in the playlist. What is immediately noticeable is that the songs occur mostly in the same tempo range. This is a tempo between 125 and 130 bpm (beats per minute). About the key, at first glance, it is difficult to make a statement. In general, tech house songs are mostly made in A minor. This makes overmixing in the same key easy. Later analysis will show whether the order of the songs in the playlist was determined explicitly in order to achieve a good transition.
 
 ```{r}
 housewerk <- get_playlist_audio_features("", "37i9dQZF1DXa8NOEUWPn9W")
@@ -31,6 +32,7 @@ mint <- mint |>
 all_data <- bind_rows(housewerk, technobunker, dance_rising, mint)
 ```
 
+The first visualization shows the distribution over tempo of the songs within the different playlists. In the visualization below, the x axis shows the different playlists. On the y axis, the tempo is visible. If we look closely at the visualization we see that the playlist Technobunker has a high median compared to the other playlists. There are also the fewest outliers here compared to the other playlists. The spread of Housewerk is the smallest. This means that the tempo in this playlist is mostly close to the median. This is a positive first analysis on the research question. 
 
 ```{r}
 #Boxplot
@@ -42,6 +44,7 @@ ggplot(all_data, aes(x = playlist_name, y = tempo, color = playlist_name)) +
        caption = "Portfolio Laurens Krook (13176439)") + 
   theme(legend.position = "None")
 ```
+The second visualization shows the progression of tempo over the playlist. On the x axis here the songs are numerically represented in playlist order. On the y axis, the tempo is shown. Also in this visualization it is noticeable that the playlists Housewerk and Technobunker have a better distribution of tempo compared to Dance Rising and Mint. In the latter playlists, the tempo is more dispersed
 ```{r}
 ggplot(all_data, aes(x = number_order, y= tempo, color = playlist_name)) + 
   geom_line() +
@@ -52,6 +55,8 @@ ggplot(all_data, aes(x = number_order, y= tempo, color = playlist_name)) +
        caption = "Portfolio Laurens Krook (13176439)") + 
   theme(legend.position = "None")
 ```
+The last visualization shows the pitch of the different songs. The reason this visualization was chosen is because it is important for DJs to observe pitch when mixing songs. The outer ring shows the keys. The color and deflection of the bars shows the number of songs in this key. If the visualization shows that the songs have an even distribution across the key, this may mean that the key is observed when songs are mixed. In the visualization this can be clearly seen with the playlists Mint and Housewerk. 
+
 ```{r}
 keys_housewerk <- housewerk |>
   count(key) |>
@@ -77,5 +82,6 @@ ggplot(all_keys, aes(x = str_wrap(key, 5), y = n, fill = n)) +
        caption = "Portfolio Laurens Krook (13176439)")
   
 ```
+
 
 
