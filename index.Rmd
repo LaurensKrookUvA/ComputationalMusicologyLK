@@ -1,0 +1,79 @@
+---
+title: "My Portfolio"
+author: "LaurensKrook"
+date: "Spring 2023"
+output: html_document
+---
+```{r}
+library(tidyverse)
+library(spotifyr)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+housewerk <- get_playlist_audio_features("", "37i9dQZF1DXa8NOEUWPn9W")
+technobunker <- get_playlist_audio_features("", "37i9dQZF1DX6J5NfMJS675")
+dance_rising <- get_playlist_audio_features("", "37i9dQZF1DX8tZsk68tuDw")
+mint <- get_playlist_audio_features("", "37i9dQZF1DX4dyzvuaRJ0n")
+
+housewerk <- housewerk |>
+  mutate(number_order = row_number())
+technobunker <- technobunker |>
+  mutate(number_order = row_number())
+dance_rising <- dance_rising |>
+  mutate(number_order = row_number())
+mint <- mint |>
+  mutate(number_order = row_number())
+
+all_data <- bind_rows(housewerk, technobunker, dance_rising, mint)
+```
+
+
+```{r}
+#Boxplot
+ggplot(all_data, aes(x = playlist_name, y = tempo, color = playlist_name)) + 
+  geom_boxplot() + 
+  labs(title = "Tempo of the songs in the playlists", 
+       x = "Playlist Name",
+       y = "Tempo (Beats per minute)", 
+       caption = "Portfolio Laurens Krook (13176439)") + 
+  theme(legend.position = "None")
+```
+```{r}
+ggplot(all_data, aes(x = number_order, y= tempo, color = playlist_name)) + 
+  geom_line() +
+  facet_wrap(vars(playlist_name), ncol = 4, scales = "free_x") + 
+  labs(title = "Tempo of the songs in order of playlists", 
+       x = "Track Number", 
+       y = "Tempo (in beats per minute)",
+       caption = "Portfolio Laurens Krook (13176439)") + 
+  theme(legend.position = "None")
+```
+```{r}
+keys_housewerk <- housewerk |>
+  count(key) |>
+  mutate(playlist_name = "housewerk")
+keys_technobunker <- technobunker |>
+  count(key) |>
+  mutate(playlist_name = "technobunker")
+keys_dance_rising <- dance_rising |>
+  count(key) |>
+  mutate(playlist_name = "dance_rising")
+keys_mint <- mint |>
+  count(key) |>
+  mutate(playlist_name = "mint")
+
+all_keys = bind_rows(keys_housewerk, keys_technobunker, keys_dance_rising, keys_mint)
+ggplot(all_keys, aes(x = str_wrap(key, 5), y = n, fill = n)) + 
+  geom_col() +
+  scale_fill_gradient(low="red", high="green") +
+  facet_wrap(vars(playlist_name), ncol = 4) + 
+  coord_polar() + 
+  labs(title = "Number of songs with same key",
+       y = "Key",
+       x = "Playlist name")
+  
+```
+
+
