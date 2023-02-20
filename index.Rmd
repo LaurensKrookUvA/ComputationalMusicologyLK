@@ -3,6 +3,8 @@ title: "My Portfolio"
 author: "LaurensKrook"
 date: "Spring 2023"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 ```{r}
 library(tidyverse)
@@ -71,8 +73,8 @@ ggplot(all_keys, aes(x = str_wrap(key, 5), y = n, fill = n)) +
   facet_wrap(vars(playlist_name), ncol = 4) + 
   coord_polar() + 
   labs(title = "Number of songs with same key",
-       y = "Key",
-       x = "Playlist name")
+       x = "Playlist name",
+       caption = "Portfolio Laurens Krook (13176439)")
   
 ```
 
