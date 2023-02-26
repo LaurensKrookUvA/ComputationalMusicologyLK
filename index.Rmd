@@ -15,7 +15,9 @@ library(tidyverse)
 library(spotifyr)
 library(dplyr)
 library(ggplot2)
+library(compmus)
 ```
+
 
 Intro
 =========================================================
@@ -62,7 +64,7 @@ valueBox(nrow(dance_rising), caption = 'Number of DancePop songs in the playlist
 valueBox(nrow(mint), caption = 'Number of DancePop songs in the playlist Mint', icon="ion-music-note")
 ```
 
-Tempo and key {data-orientation=columns}
+What musical elements are necessary to include in this analysis? {data-orientation=columns}
 =========================================================
 Column {data-width=500 .tabset}
 -----------------------------------------------------------------------
@@ -126,3 +128,66 @@ ggplot(all_keys, aes(x = str_wrap(key, 5), y = n, fill = n)) +
 Column {data-width=500}
 -----------------------------------------------------------------------
 ### Tempo and Key
+
+Can the chromograms tell us anything about how the numbers relate to each other?
+=========================================================
+```{r}
+first_song <-
+  get_tidy_audio_analysis("65nn7e1DOFh5MRHHQ7GWBi") |>
+  select(segments) |>
+  unnest(segments) |>
+  select(start, duration, pitches)
+
+second_song <-
+  get_tidy_audio_analysis("15223sfwoQj4IAJL8GSnfO") |>
+  select(segments) |>
+  unnest(segments) |>
+  select(start, duration, pitches)
+
+```
+
+Column {data-width=200, data-orientation=columns}
+-----------------------------------------------------------------------
+### First song Housewerk
+```{r}
+first_song |>
+  mutate(pitches = map(pitches, compmus_normalise, "chebyshev")) |>
+  compmus_gather_chroma() |> 
+  ggplot(
+    aes(
+      x = start + duration / 2,
+      width = duration,
+      y = pitch_class,
+      fill = value
+    )
+  ) +
+  geom_tile() +
+  labs(x = "Time (s)", y = NULL, fill = "Magnitude", title = "Häwk, Beyge - No Diggity") +
+  theme_minimal() +
+  scale_fill_viridis_c()
+```
+
+>In this section, we chose to compare two songs from the playlist Housewerk. The songs chosen are listed in order in the playlist. This is to see if it becomes clear if certain chords are used in the songs that go well together. This makes the transition between the songs sound better. Starting with the first track, the song No Diggity produced by Häwk and Beyge was chosen. The song is a cover of of the original song written by Blackstreet, Dr. Dre and Queen Pan that was released in 1996. The song is played primarily in C# and F#. Chebyshev was chosen as the normalization. This is because with the euclidean and manhattan it was not clearly visible which notes were used.The second song analyzed is the song Ritmo by Raffa FL. It is a cover of the song La Colegiala by The Boy Next Door, Fresh Coast and Jody Bernal. From the chromogram, we notice that the song is played in F, G and Gm. Euclidean was chosen as the normalization. This is because with this method the magnitude (in yellow) was the clearest. With confirmation from the spotify API, it is clear that these two songs can be well mixed together. 
+
+
+Column {data-width=200, data-orientation=rows}
+-----------------------------------------------------------------------
+### Second song Housewerk
+```{r}
+second_song |>
+  mutate(pitches = map(pitches, compmus_normalise, "euclidean")) |>
+  compmus_gather_chroma() |> 
+  ggplot(
+    aes(
+      x = start + duration / 2,
+      width = duration,
+      y = pitch_class,
+      fill = value
+    )
+  ) +
+  geom_tile() +
+  labs(x = "Time (s)", y = NULL, fill = "Magnitude", title = "Raffa Fl - Ritmo") +
+  theme_minimal() +
+  scale_fill_viridis_c()
+```
+
