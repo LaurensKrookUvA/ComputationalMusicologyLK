@@ -17,7 +17,110 @@ library(dplyr)
 library(ggplot2)
 library(compmus)
 ```
+Similarity Matrix
+=========================================================
+Column {data-width=500 .tabset}
+-----------------------------------------------------------------------
+### La Fuente - I Want You
+```{r}
+bzt <-
+  get_tidy_audio_analysis("4s8BpmFtxDgeCoPj2XHtVj") |>
+  compmus_align(bars, segments) |>
+  select(bars) |>
+  unnest(bars) |>
+  mutate(
+    pitches =
+      map(segments,
+        compmus_summarise, pitches,
+        method = "acentre", norm = "manhattan"
+      )
+  ) |>
+  mutate(
+    timbre =
+      map(segments,
+        compmus_summarise, timbre,
+        method = "mean"
+      )
+  )
+bind_rows(
+  bzt |> 
+    compmus_self_similarity(pitches, "aitchison") |> 
+    mutate(d = d / max(d), type = "Chroma"),
+  bzt |> 
+    compmus_self_similarity(timbre, "euclidean") |> 
+    mutate(d = d / max(d), type = "Timbre")
+) |>
+  mutate() |> 
+  ggplot(
+    aes(
+      x = xstart + xduration / 2,
+      width = xduration,
+      y = ystart + yduration / 2,
+      height = yduration,
+      fill = d
+    )
+  ) +
+  geom_tile() +
+  coord_fixed() +
+  facet_wrap(~type) +
+  scale_fill_viridis_c(option = "E", guide = "none") +
+  guides(fill = guide_legend(title = "Intensity")) +
+  theme_classic() + 
+  labs(x = "", y = "", title = "La Fuente - I Want You")
+```
 
+> Above are the similairty matrices of the chroma features (left) and timbre (right). The song chosen is La Fuente - I Want You. The song is in key 8, the tempo is 125 bpm and energy is 0.8. We analyze the figure using 3 criteria. Representation (shows the repeating elements with diagonal sloping lines), novelty (bright yellow lines when a part is not similar and dark lines when it is) and lastly homogeneity (A so-called chessboard that when it is dark blue shows that everything is similar and when it is more yellow more difference). Starting with the representation, it is difficult to find the diagonal lines. They can be seen very slightly at the end of the song Looking at the novelty, it is clear that the song has 2 refrains. These are the intersections of the yellow lines around 40 and 190 seconds. At that point the song changes tremendously. Looking last at the homogeneity, the chessboards are mainly found between 50 and 100 seconds. 
+
+
+### Tom Santa - Rainfall
+```{r}
+bzt <-
+  get_tidy_audio_analysis("1M8t1j3Kv2qp97bdq5q4Vl") |>
+  compmus_align(bars, segments) |>
+  select(bars) |>
+  unnest(bars) |>
+  mutate(
+    pitches =
+      map(segments,
+        compmus_summarise, pitches,
+        method = "acentre", norm = "manhattan"
+      )
+  ) |>
+  mutate(
+    timbre =
+      map(segments,
+        compmus_summarise, timbre,
+        method = "mean"
+      )
+  )
+bind_rows(
+  bzt |> 
+    compmus_self_similarity(pitches, "aitchison") |> 
+    mutate(d = d / max(d), type = "Chroma"),
+  bzt |> 
+    compmus_self_similarity(timbre, "euclidean") |> 
+    mutate(d = d / max(d), type = "Timbre")
+) |>
+  mutate() |> 
+  ggplot(
+    aes(
+      x = xstart + xduration / 2,
+      width = xduration,
+      y = ystart + yduration / 2,
+      height = yduration,
+      fill = d
+    )
+  ) +
+  geom_tile() +
+  coord_fixed() +
+  facet_wrap(~type) +
+  scale_fill_viridis_c(option = "E", guide = "none") +
+  guides(fill = guide_legend(title = "Intensity")) + 
+  theme_classic() + 
+  labs(x = "", y = "", title = "Tom Santa - Rainfall")
+```
+
+> Looking at the second song, we look at the analysis of the song Tom Santa - Rainfall. This is a cover of the song Shackles released by Mary Mary. The song is in key 5, the tempo is 128 bpm and the energy is almost 0.9. Like the song by La Fuente, I analyze this song using the 3 characteristics of representation, novelty and homogeneity. Starting with representation, we see the diagonal dark lines a lot in the song. During the beginning of the song until 30 seconds it is clearly visible. Looking at the novelty, a large intersection can be found around 90 seconds. You can clearly hear the transition in the song. Lastly looking at the homogeneity, the chess boards are also well found in this song. Especially some smaller chessboards between 25 and 90 seconds. Because these are dark blue chessboards, the song changes a lot in this time interval
 
 Intro
 =========================================================
@@ -190,4 +293,7 @@ second_song |>
   theme_minimal() +
   scale_fill_viridis_c()
 ```
+
+
+
 
