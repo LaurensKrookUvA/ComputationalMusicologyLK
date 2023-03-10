@@ -1,12 +1,13 @@
 ---
-title: "My Portfolio"
+title: "The Perfect Transition"
 author: "Laurens Krook"
 date: "Spring 2023"
 output: 
   flexdashboard::flex_dashboard:
-    orientation: rows
-    vertical_layout: fill
+    orientation: row
+    #vertical_layout: fill
     storyboard: true
+    theme: flatly
 ---
 
 ```{r setup, include=FALSE}
@@ -15,12 +16,198 @@ library(tidyverse)
 library(spotifyr)
 library(dplyr)
 library(ggplot2)
-library(compmus)
+library(compmus) 
+library(plotly)
 ```
-Similarity Matrix
-=========================================================
-Column {data-width=500 .tabset}
+
+Introduction {data-icon="ion-ios-home"}
+=======================================================
+```{r, include=FALSE}
+housewerk <- get_playlist_audio_features("", "37i9dQZF1DXa8NOEUWPn9W")
+technobunker <- get_playlist_audio_features("", "37i9dQZF1DX6J5NfMJS675")
+dance_rising <- get_playlist_audio_features("", "37i9dQZF1DX8tZsk68tuDw")
+mint <- get_playlist_audio_features("", "37i9dQZF1DX4dyzvuaRJ0n")
+
+housewerk <- housewerk |>
+  mutate(number_order = row_number())
+technobunker <- technobunker |>
+  mutate(number_order = row_number())
+dance_rising <- dance_rising |>
+  mutate(number_order = row_number())
+mint <- mint |>
+  mutate(number_order = row_number())
+
+all_data <- bind_rows(housewerk, technobunker, dance_rising, mint)
+```
+
+Row {data-height=200}
 -----------------------------------------------------------------------
+### Valuebox
+
+```{r}
+valueBox(nrow(housewerk), caption = 'Number of TechHouse songs in the playlist Houswerk', icon="ion-music-note")
+```
+
+### Valuebox
+```{r}
+valueBox(nrow(technobunker), caption = 'Number of Techno songs in the playlist Technobunker', icon="ion-music-note")
+```
+
+### Valuebox
+```{r}
+valueBox(nrow(dance_rising), caption = 'Number of DancePop songs in the playlist Dance Rising', icon="ion-music-note")
+```
+
+### Valuebox
+```{r}
+valueBox(nrow(mint), caption = 'Number of DancePop songs in the playlist Mint', icon="ion-music-note")
+```
+
+Row {data-height=250} 
+-----------------------------------------------------------------------
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXa8NOEUWPn9W?utm_source=generator" width="25%" height="100" frameBorder="0" allowtransparency="true" allow="encrypted-media" data-external="1"></iframe>
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX6J5NfMJS675?utm_source=generator" width="25%" height="100" frameBorder="0" allowtransparency="true" allow="encrypted-media" data-external="1"></iframe>
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8tZsk68tuDw?utm_source=generator" width="25%" height="100" frameBorder="0" allowtransparency="true" allow="encrypted-media" data-external="1"></iframe>
+
+<iframe style="border-radius:12px" src=https://open.spotify.com/embed/playlist/37i9dQZF1DX4dyzvuaRJ0n?utm_source=generator" width="25%" height="100" frameBorder="0" allowtransparency="true" allow="encrypted-media" data-external="1"></iframe>
+
+Row {data-height=1000}
+-------------------------------------------------------------------------
+### Introduction
+This portfolio looks at the relationship between Spotify's Automix functionality and the musical corresponding mix components used in the DJ industry to smoothly transition songs. The automix playlists used for this portfolio are HouseWerk, TechnoBunker, Mint and Dance Rising. The music contained in the playlist is best classified under House music. In subcategory the Housewerk playlist contains techhouse, TechnoBunker techno, DanceRising and Mint dance pop. The interest in this comparison came from being a DJ myself. In the DJ world, mainly 2 components are used that are important for a transition between two songs. These are the tempo of the songs and the pitch (key) that the mixing songs are in. It will be investigated whether these components are also used by the automix functionality. This will focus on the order of the songs in the playlist. The shuffle functionality will be left out.  It may also turn out that the functionality is completely random. Looking at the HouseWerk playlist, the first analysis can be made of the songs that are in the playlist. What is immediately noticeable is that the songs occur mostly in the same tempo range. This is a tempo between 125 and 130 bpm (beats per minute). About the key, at first glance, it is difficult to make a statement. In general, tech house songs are mostly made in A minor. This makes overmixing in the same key easy. Later analysis will show whether the order of the songs in the playlist was determined explicitly in order to achieve a good transition.
+
+### How to mix two songs together? 
+Test
+
+Tempo {data-navmenu="Important musical elements for analysis" data-icon="ion-ios-speedometer" .storyboard}
+=======================================================
+### Tempo of the songs in the playlist
+```{r}
+#Boxplot
+tempoplot <-ggplot(all_data, aes(x = playlist_name, y = tempo, color = playlist_name)) + 
+  geom_boxplot() + 
+  labs(title = "Tempo of the songs in the playlists", 
+       x = "Playlist Name",
+       y = "Tempo (Beats per minute)", 
+       caption = "Portfolio Laurens Krook (13176439)") + 
+  theme(legend.position = "None")
+ggplotly(tempoplot)
+```
+
+***
+The first visualization shows the distribution over tempo of the songs within the different playlists. In the visualization below, the x axis shows the different playlists. On the y axis, the tempo is visible. If we look closely at the visualization we see that the playlist Technobunker has a high median compared to the other playlists. There are also the fewest outliers here compared to the other playlists. The spread of Housewerk is the smallest. This means that the tempo in this playlist is mostly close to the median. This is a positive first analysis on the research question.
+
+### Tempo of the songs in order of playlists
+```{r}
+ggplot(all_data, aes(x = number_order, y= tempo, color = playlist_name)) + 
+  geom_line() +
+  facet_wrap(vars(playlist_name), ncol = 4, scales = "free_x") + 
+  labs(title = "Tempo of the songs in order of playlists", 
+       x = "Track Number", 
+       y = "Tempo (in beats per minute)",
+       caption = "Portfolio Laurens Krook (13176439)") + 
+  theme(legend.position = "None")
+```
+
+***
+The second visualization shows the progression of tempo over the playlist. On the x axis here the songs are numerically represented in playlist order. On the y axis, the tempo is shown. Also in this visualization it is noticeable that the playlists Housewerk and Technobunker have a better distribution of tempo compared to Dance Rising and Mint. In the latter playlists, the tempo is more dispersed.
+
+Key {data-navmenu="Important musical elements for analysis" data-icon="ion-key" .storyboard}
+=======================================================
+### Number of songs with same key
+```{r}
+keys_housewerk <- housewerk |>
+  count(key) |>
+  mutate(playlist_name = "housewerk")
+keys_technobunker <- technobunker |>
+  count(key) |>
+  mutate(playlist_name = "technobunker")
+keys_dance_rising <- dance_rising |>
+  count(key) |>
+  mutate(playlist_name = "dance_rising")
+keys_mint <- mint |>
+  count(key) |>
+  mutate(playlist_name = "mint")
+
+all_keys = bind_rows(keys_housewerk, keys_technobunker, keys_dance_rising, keys_mint)
+ggplot(all_keys, aes(x = str_wrap(key, 5), y = n, fill = n)) + 
+  geom_col() +
+  scale_fill_gradient(low="red", high="green") +
+  facet_wrap(vars(playlist_name), ncol = 4) + 
+  coord_polar() + 
+  labs(title = "Number of songs with same key",
+       x = "Playlist name",
+       caption = "Portfolio Laurens Krook (13176439)")
+```
+
+***
+This visualization shows the pitch of the different songs. The reason this visualization was chosen is because it is important for DJs to observe pitch when mixing songs. The outer ring shows the keys. The color and deflection of the bars shows the number of songs in this key. If the visualization shows that the songs have an even distribution across the key, this may mean that the key is observed when songs are mixed. In the visualization this can be clearly seen with the playlists Mint and Housewerk. 
+
+Chromograms {data-navmenu="Important musical elements for analysis" data-icon="ion-music-note"}
+=======================================================
+```{r}
+first_song <-
+  get_tidy_audio_analysis("65nn7e1DOFh5MRHHQ7GWBi") |>
+  select(segments) |>
+  unnest(segments) |>
+  select(start, duration, pitches)
+
+second_song <-
+  get_tidy_audio_analysis("15223sfwoQj4IAJL8GSnfO") |>
+  select(segments) |>
+  unnest(segments) |>
+  select(start, duration, pitches)
+
+```
+
+Row {.tabset}
+-----------------------------------------------------------------------
+### First song Housewerk
+```{r}
+first_song |>
+  mutate(pitches = map(pitches, compmus_normalise, "chebyshev")) |>
+  compmus_gather_chroma() |> 
+  ggplot(
+    aes(
+      x = start + duration / 2,
+      width = duration,
+      y = pitch_class,
+      fill = value
+    )
+  ) +
+  geom_tile() +
+  labs(x = "Time (s)", y = NULL, fill = "Magnitude", title = "Häwk, Beyge - No Diggity") +
+  theme_minimal() +
+  scale_fill_viridis_c()
+```
+
+>In this section, we chose to compare two songs from the playlist Housewerk. The songs chosen are listed in order in the playlist. This is to see if it becomes clear if certain chords are used in the songs that go well together. This makes the transition between the songs sound better. Starting with the first track, the song No Diggity produced by Häwk and Beyge was chosen. The song is a cover of of the original song written by Blackstreet, Dr. Dre and Queen Pan that was released in 1996. The song is played primarily in C# and F#. Chebyshev was chosen as the normalization. This is because with the euclidean and manhattan it was not clearly visible which notes were used.The second song analyzed is the song Ritmo by Raffa FL. It is a cover of the song La Colegiala by The Boy Next Door, Fresh Coast and Jody Bernal. From the chromogram, we notice that the song is played in F, G and Gm. Euclidean was chosen as the normalization. This is because with this method the magnitude (in yellow) was the clearest. With confirmation from the spotify API, it is clear that these two songs can be well mixed together. 
+
+### Second song Housewerk
+```{r}
+second_song |>
+  mutate(pitches = map(pitches, compmus_normalise, "euclidean")) |>
+  compmus_gather_chroma() |> 
+  ggplot(
+    aes(
+      x = start + duration / 2,
+      width = duration,
+      y = pitch_class,
+      fill = value
+    )
+  ) +
+  geom_tile() +
+  labs(x = "Time (s)", y = NULL, fill = "Magnitude", title = "Raffa Fl - Ritmo") +
+  theme_minimal() +
+  scale_fill_viridis_c()
+```
+
+>In this section, we chose to compare two songs from the playlist Housewerk. The songs chosen are listed in order in the playlist. This is to see if it becomes clear if certain chords are used in the songs that go well together. This makes the transition between the songs sound better. Starting with the first track, the song No Diggity produced by Häwk and Beyge was chosen. The song is a cover of of the original song written by Blackstreet, Dr. Dre and Queen Pan that was released in 1996. The song is played primarily in C# and F#. Chebyshev was chosen as the normalization. This is because with the euclidean and manhattan it was not clearly visible which notes were used.The second song analyzed is the song Ritmo by Raffa FL. It is a cover of the song La Colegiala by The Boy Next Door, Fresh Coast and Jody Bernal. From the chromogram, we notice that the song is played in F, G and Gm. Euclidean was chosen as the normalization. This is because with this method the magnitude (in yellow) was the clearest. With confirmation from the spotify API, it is clear that these two songs can be well mixed together. 
+
+Similarity Matrix {data-navmenu="Important musical elements for analysis" data-icon="ion-android-contacts" .storyboard}
+=========================================================
 ### La Fuente - I Want You
 ```{r}
 bzt <-
@@ -69,7 +256,9 @@ bind_rows(
   labs(x = "", y = "", title = "La Fuente - I Want You")
 ```
 
-> Above are the similairty matrices of the chroma features (left) and timbre (right). The song chosen is La Fuente - I Want You. The song is in key 8, the tempo is 125 bpm and energy is 0.8. We analyze the figure using 3 criteria. Representation (shows the repeating elements with diagonal sloping lines), novelty (bright yellow lines when a part is not similar and dark lines when it is) and lastly homogeneity (A so-called chessboard that when it is dark blue shows that everything is similar and when it is more yellow more difference). Starting with the representation, it is difficult to find the diagonal lines. They can be seen very slightly at the end of the song Looking at the novelty, it is clear that the song has 2 refrains. These are the intersections of the yellow lines around 40 and 190 seconds. At that point the song changes tremendously. Looking last at the homogeneity, the chessboards are mainly found between 50 and 100 seconds. 
+***
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/4s8BpmFtxDgeCoPj2XHtVj?utm_source=generator" width="100%" height="152" frameBorder="0" allowtransparency="true" allow="encrypted-media" data-external="1"></iframe>
+Above are the similairty matrices of the chroma features (left) and timbre (right). The song chosen is La Fuente - I Want You. The song is in key 8, the tempo is 125 bpm and energy is 0.8. We analyze the figure using 3 criteria. Representation (shows the repeating elements with diagonal sloping lines), novelty (bright yellow lines when a part is not similar and dark lines when it is) and lastly homogeneity (A so-called chessboard that when it is dark blue shows that everything is similar and when it is more yellow more difference). Starting with the representation, it is difficult to find the diagonal lines. They can be seen very slightly at the end of the song Looking at the novelty, it is clear that the song has 2 refrains. These are the intersections of the yellow lines around 40 and 190 seconds. At that point the song changes tremendously. Looking last at the homogeneity, the chessboards are mainly found between 50 and 100 seconds. 
 
 
 ### Tom Santa - Rainfall
@@ -120,180 +309,10 @@ bind_rows(
   labs(x = "", y = "", title = "Tom Santa - Rainfall")
 ```
 
-> Looking at the second song, we look at the analysis of the song Tom Santa - Rainfall. This is a cover of the song Shackles released by Mary Mary. The song is in key 5, the tempo is 128 bpm and the energy is almost 0.9. Like the song by La Fuente, I analyze this song using the 3 characteristics of representation, novelty and homogeneity. Starting with representation, we see the diagonal dark lines a lot in the song. During the beginning of the song until 30 seconds it is clearly visible. Looking at the novelty, a large intersection can be found around 90 seconds. You can clearly hear the transition in the song. Lastly looking at the homogeneity, the chess boards are also well found in this song. Especially some smaller chessboards between 25 and 90 seconds. Because these are dark blue chessboards, the song changes a lot in this time interval
-
-Intro
-=========================================================
-This portfolio looks at the relationship between Spotify's Automix functionality and the musical corresponding mix components used in the DJ industry to smoothly transition songs. The automix playlists used for this portfolio are HouseWerk, TechnoBunker, Mint and Dance Rising. The music contained in the playlist is best classified under House music. In subcategory the Housewerk playlist contains techhouse, TechnoBunker techno, DanceRising and Mint dance pop. The interest in this comparison came from being a DJ myself. In the DJ world, mainly 2 components are used that are important for a transition between two songs. These are the tempo of the songs and the pitch (key) that the mixing songs are in. It will be investigated whether these components are also used by the automix functionality. This will focus on the order of the songs in the playlist. The shuffle functionality will be left out.  It may also turn out that the functionality is completely random. Looking at the HouseWerk playlist, the first analysis can be made of the songs that are in the playlist. What is immediately noticeable is that the songs occur mostly in the same tempo range. This is a tempo between 125 and 130 bpm (beats per minute). About the key, at first glance, it is difficult to make a statement. In general, tech house songs are mostly made in A minor. This makes overmixing in the same key easy. Later analysis will show whether the order of the songs in the playlist was determined explicitly in order to achieve a good transition.
-
-```{r, include=FALSE}
-housewerk <- get_playlist_audio_features("", "37i9dQZF1DXa8NOEUWPn9W")
-technobunker <- get_playlist_audio_features("", "37i9dQZF1DX6J5NfMJS675")
-dance_rising <- get_playlist_audio_features("", "37i9dQZF1DX8tZsk68tuDw")
-mint <- get_playlist_audio_features("", "37i9dQZF1DX4dyzvuaRJ0n")
-
-housewerk <- housewerk |>
-  mutate(number_order = row_number())
-technobunker <- technobunker |>
-  mutate(number_order = row_number())
-dance_rising <- dance_rising |>
-  mutate(number_order = row_number())
-mint <- mint |>
-  mutate(number_order = row_number())
-
-all_data <- bind_rows(housewerk, technobunker, dance_rising, mint)
-```
-
-Column {data-width=250}
------------------------------------------------------------------------
-### Valuebox
-
-```{r}
-valueBox(nrow(housewerk), caption = 'Number of TechHouse songs in the playlist Houswerk', icon="ion-music-note")
-```
-
-### Valuebox
-```{r}
-valueBox(nrow(technobunker), caption = 'Number of Techno songs in the playlist Technobunker', icon="ion-music-note")
-```
-
-### Valuebox
-```{r}
-valueBox(nrow(dance_rising), caption = 'Number of DancePop songs in the playlist Dance Rising', icon="ion-music-note")
-```
-
-### Valuebox
-```{r}
-valueBox(nrow(mint), caption = 'Number of DancePop songs in the playlist Mint', icon="ion-music-note")
-```
-
-What musical elements are necessary to include in this analysis? {data-orientation=columns}
-=========================================================
-Column {data-width=500 .tabset}
------------------------------------------------------------------------
-### Tempo of the songs in the playlist
-```{r}
-#Boxplot
-ggplot(all_data, aes(x = playlist_name, y = tempo, color = playlist_name)) + 
-  geom_boxplot() + 
-  labs(title = "Tempo of the songs in the playlists", 
-       x = "Playlist Name",
-       y = "Tempo (Beats per minute)", 
-       caption = "Portfolio Laurens Krook (13176439)") + 
-  theme(legend.position = "None")
-```
-
->The first visualization shows the distribution over tempo of the songs within the different playlists. In the visualization below, the x axis shows the different playlists. On the y axis, the tempo is visible. If we look closely at the visualization we see that the playlist Technobunker has a high median compared to the other playlists. There are also the fewest outliers here compared to the other playlists. The spread of Housewerk is the smallest. This means that the tempo in this playlist is mostly close to the median. This is a positive first analysis on the research question.
-
-### Tempo of the songs in order of playlists
-```{r}
-ggplot(all_data, aes(x = number_order, y= tempo, color = playlist_name)) + 
-  geom_line() +
-  facet_wrap(vars(playlist_name), ncol = 4, scales = "free_x") + 
-  labs(title = "Tempo of the songs in order of playlists", 
-       x = "Track Number", 
-       y = "Tempo (in beats per minute)",
-       caption = "Portfolio Laurens Krook (13176439)") + 
-  theme(legend.position = "None")
-```
-
->The second visualization shows the progression of tempo over the playlist. On the x axis here the songs are numerically represented in playlist order. On the y axis, the tempo is shown. Also in this visualization it is noticeable that the playlists Housewerk and Technobunker have a better distribution of tempo compared to Dance Rising and Mint. In the latter playlists, the tempo is more dispersed
-
-### Number of songs with same key
-```{r}
-keys_housewerk <- housewerk |>
-  count(key) |>
-  mutate(playlist_name = "housewerk")
-keys_technobunker <- technobunker |>
-  count(key) |>
-  mutate(playlist_name = "technobunker")
-keys_dance_rising <- dance_rising |>
-  count(key) |>
-  mutate(playlist_name = "dance_rising")
-keys_mint <- mint |>
-  count(key) |>
-  mutate(playlist_name = "mint")
-
-all_keys = bind_rows(keys_housewerk, keys_technobunker, keys_dance_rising, keys_mint)
-ggplot(all_keys, aes(x = str_wrap(key, 5), y = n, fill = n)) + 
-  geom_col() +
-  scale_fill_gradient(low="red", high="green") +
-  facet_wrap(vars(playlist_name), ncol = 4) + 
-  coord_polar() + 
-  labs(title = "Number of songs with same key",
-       x = "Playlist name",
-       caption = "Portfolio Laurens Krook (13176439)")
-  
-```
-
->The last visualization shows the pitch of the different songs. The reason this visualization was chosen is because it is important for DJs to observe pitch when mixing songs. The outer ring shows the keys. The color and deflection of the bars shows the number of songs in this key. If the visualization shows that the songs have an even distribution across the key, this may mean that the key is observed when songs are mixed. In the visualization this can be clearly seen with the playlists Mint and Housewerk. 
-
-Column {data-width=500}
------------------------------------------------------------------------
-### Tempo and Key
-
-Can the chromograms tell us anything about how the numbers relate to each other?
-=========================================================
-```{r}
-first_song <-
-  get_tidy_audio_analysis("65nn7e1DOFh5MRHHQ7GWBi") |>
-  select(segments) |>
-  unnest(segments) |>
-  select(start, duration, pitches)
-
-second_song <-
-  get_tidy_audio_analysis("15223sfwoQj4IAJL8GSnfO") |>
-  select(segments) |>
-  unnest(segments) |>
-  select(start, duration, pitches)
-
-```
-
-Column {data-width=200, data-orientation=columns}
------------------------------------------------------------------------
-### First song Housewerk
-```{r}
-first_song |>
-  mutate(pitches = map(pitches, compmus_normalise, "chebyshev")) |>
-  compmus_gather_chroma() |> 
-  ggplot(
-    aes(
-      x = start + duration / 2,
-      width = duration,
-      y = pitch_class,
-      fill = value
-    )
-  ) +
-  geom_tile() +
-  labs(x = "Time (s)", y = NULL, fill = "Magnitude", title = "Häwk, Beyge - No Diggity") +
-  theme_minimal() +
-  scale_fill_viridis_c()
-```
-
->In this section, we chose to compare two songs from the playlist Housewerk. The songs chosen are listed in order in the playlist. This is to see if it becomes clear if certain chords are used in the songs that go well together. This makes the transition between the songs sound better. Starting with the first track, the song No Diggity produced by Häwk and Beyge was chosen. The song is a cover of of the original song written by Blackstreet, Dr. Dre and Queen Pan that was released in 1996. The song is played primarily in C# and F#. Chebyshev was chosen as the normalization. This is because with the euclidean and manhattan it was not clearly visible which notes were used.The second song analyzed is the song Ritmo by Raffa FL. It is a cover of the song La Colegiala by The Boy Next Door, Fresh Coast and Jody Bernal. From the chromogram, we notice that the song is played in F, G and Gm. Euclidean was chosen as the normalization. This is because with this method the magnitude (in yellow) was the clearest. With confirmation from the spotify API, it is clear that these two songs can be well mixed together. 
+***
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/1M8t1j3Kv2qp97bdq5q4Vl?utm_source=generator" width="100%" height="152" frameBorder="0" allowtransparency="true" allow="encrypted-media" data-external="1"></iframe>
+Looking at the second song, we look at the analysis of the song Tom Santa - Rainfall. This is a cover of the song Shackles released by Mary Mary. The song is in key 5, the tempo is 128 bpm and the energy is almost 0.9. Like the song by La Fuente, I analyze this song using the 3 characteristics of representation, novelty and homogeneity. Starting with representation, we see the diagonal dark lines a lot in the song. During the beginning of the song until 30 seconds it is clearly visible. Looking at the novelty, a large intersection can be found around 90 seconds. You can clearly hear the transition in the song. Lastly looking at the homogeneity, the chess boards are also well found in this song. Especially some smaller chessboards between 25 and 90 seconds. Because these are dark blue chessboards, the song changes a lot in this time interval
 
 
-Column {data-width=200, data-orientation=rows}
------------------------------------------------------------------------
-### Second song Housewerk
-```{r}
-second_song |>
-  mutate(pitches = map(pitches, compmus_normalise, "euclidean")) |>
-  compmus_gather_chroma() |> 
-  ggplot(
-    aes(
-      x = start + duration / 2,
-      width = duration,
-      y = pitch_class,
-      fill = value
-    )
-  ) +
-  geom_tile() +
-  labs(x = "Time (s)", y = NULL, fill = "Magnitude", title = "Raffa Fl - Ritmo") +
-  theme_minimal() +
-  scale_fill_viridis_c()
-```
-
-
-
-
+Chordograms {data-navmenu="Important musical elements for analysis" data-icon="ion-music-note" .storyboard}
+==========================================================================
