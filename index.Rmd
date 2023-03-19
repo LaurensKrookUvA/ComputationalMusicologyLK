@@ -19,24 +19,26 @@ library(compmus)
 library(plotly)
 ```
 
-```{r, include=FALSE}
-housewerk <- get_playlist_audio_features("", "37i9dQZF1DXa8NOEUWPn9W")
-technobunker <- get_playlist_audio_features("", "37i9dQZF1DX6J5NfMJS675")
-dance_rising <- get_playlist_audio_features("", "37i9dQZF1DX8tZsk68tuDw")
-mint <- get_playlist_audio_features("", "37i9dQZF1DX4dyzvuaRJ0n")
-
-housewerk <- housewerk |>
-  mutate(number_order = row_number())
-technobunker <- technobunker |>
-  mutate(number_order = row_number())
-dance_rising <- dance_rising |>
-  mutate(number_order = row_number())
-mint <- mint |>
-  mutate(number_order = row_number())
-
-all_data <- bind_rows(housewerk, technobunker, dance_rising, mint)
+Homework 11 {.storyboard}
+===================================================
+### Tempogram {data-commentary-width=400}
+```{r}
+affraid_to_feel <- get_tidy_audio_analysis("40SBS57su9xLiE1WqkXOVr")
+affraid_to_feel |>
+  tempogram(window_size = 8, hop_size = 1, cyclic = TRUE) |>
+  ggplot(aes(x = time, y = bpm, fill = power)) +
+  geom_raster() +
+  scale_fill_viridis_c(guide = "none") +
+  labs(x = "Time (s)", y = "Tempo (BPM)", title = "LF SYSTEMS - Afraid to Feel") +
+  theme_classic()
 ```
 
+***
+In the DJ world, the easiest method to mix two songs is to keep the tempo the same throughout the song. When this is not the case, it requires an advanced technique to mix the songs together. The tempo analysis features in the turntable are now no longer accurate because this currently gives an average value of the tempo over time rather than the tempo per section in the song. The DJ must be familiar with this change in tempo in order to mix the song correctly. An example of an outlier in the corpus is the song [Affraid to Feel by LF SYSTEM](https://open.spotify.com/track/40SBS57su9xLiE1WqkXOVr?si=3aa011c350324fad). The song was released on May 2, 2022. The song uses the sample from the song [I Can't Stop (Turning You On) by SILK](https://open.spotify.com/track/6la3A2IUZcuIH5tXOQWqxL?si=db8bfd669fd24641). This song has a tempo of 85 bpm. So for LF SYSTEM it was a challenge to incorporate the sample into a disco track with a tempo of 130 BPM. This is evident from the tempogram. The song starts slowly with a tempo of 100 BPM. After 20 seconds, the tempo increases to 130 BPM. This is when song switches from the intro to the chorus. What is not immediately clear is that after the chorus, the tempo drops slightly. After repeated listens, this became audible. From the tempogram it can be seen that after the first chorus, the chorus returns 2 more times. The last thing that stands out is that after about 150 seconds the tempo is classified as rapidly increasing. In the recording it can be heard that the kick drum changes from every four-quarter measure to every 8th measure. This makes the tempo seem to double but is not actually the case. It is the lead-up to the chorus. I myself tried to follow the tempo. See the video below for this. 
+
+<video width="320" height="170" controls>
+  <source src="VideoTap.mp4" type="video/mp4">
+</video>
 
 Introduction {data-icon="ion-ios-home"}
 =======================================================
@@ -131,25 +133,6 @@ ggplot(all_data, aes(x = number_order, y= tempo, color = playlist_name)) +
 
 ***
 The second visualization shows the progression of tempo over the playlist. On the x axis here the songs are numerically represented in playlist order. On the y axis, the tempo is shown. Also in this visualization it is noticeable that the playlists Housewerk and Technobunker have a better distribution of tempo compared to Dance Rising and Mint. In the latter playlists, the tempo is more dispersed.
-
-### Tempogram {data-commentary-width=400}
-```{r}
-affraid_to_feel <- get_tidy_audio_analysis("40SBS57su9xLiE1WqkXOVr")
-affraid_to_feel |>
-  tempogram(window_size = 8, hop_size = 1, cyclic = TRUE) |>
-  ggplot(aes(x = time, y = bpm, fill = power)) +
-  geom_raster() +
-  scale_fill_viridis_c(guide = "none") +
-  labs(x = "Time (s)", y = "Tempo (BPM)", title = "LF SYSTEMS - Afraid to Feel") +
-  theme_classic()
-```
-
-***
-In the DJ world, the easiest method to mix two songs is to keep the tempo the same throughout the song. When this is not the case, it requires an advanced technique to mix the songs together. The tempo analysis features in the turntable are now no longer accurate because this currently gives an average value of the tempo over time rather than the tempo per section in the song. The DJ must be familiar with this change in tempo in order to mix the song correctly. An example of an outlier in the corpus is the song [Affraid to Feel by LF SYSTEM](https://open.spotify.com/track/40SBS57su9xLiE1WqkXOVr?si=3aa011c350324fad). The song was released on May 2, 2022. The song uses the sample from the song [I Can't Stop (Turning You On) by SILK](https://open.spotify.com/track/6la3A2IUZcuIH5tXOQWqxL?si=db8bfd669fd24641). This song has a tempo of 85 bpm. So for LF SYSTEM it was a challenge to incorporate the sample into a disco track with a tempo of 130 BPM. This is evident from the tempogram. The song starts slowly with a tempo of 100 BPM. After 20 seconds, the tempo increases to 130 BPM. This is when song switches from the intro to the chorus. What is not immediately clear is that after the chorus, the tempo drops slightly. After repeated listens, this became audible. From the tempogram it can be seen that after the first chorus, the chorus returns 2 more times. The last thing that stands out is that after about 150 seconds the tempo is classified as rapidly increasing. In the recording it can be heard that the kick drum changes from every four-quarter measure to every 8th measure. This makes the tempo seem to double but is not actually the case. It is the lead-up to the chorus. I myself tried to follow the tempo. See the video below for this. 
-
-<video width="320" height="170" controls>
-  <source src="VideoTap.mp4" type="video/mp4">
-</video>
 
 
 Key {data-navmenu="Important musical elements for analysis" data-icon="ion-key" .storyboard}
