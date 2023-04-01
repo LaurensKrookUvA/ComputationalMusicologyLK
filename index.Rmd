@@ -17,28 +17,10 @@ library(dplyr)
 library(ggplot2)
 library(compmus) 
 library(plotly)
+library(tidymodels)
+library(ggdendro)
+library(heatmaply)
 ```
-
-Homework 11 {.storyboard}
-===================================================
-### Tempogram {data-commentary-width=400}
-```{r}
-affraid_to_feel <- get_tidy_audio_analysis("40SBS57su9xLiE1WqkXOVr")
-affraid_to_feel |>
-  tempogram(window_size = 8, hop_size = 1, cyclic = TRUE) |>
-  ggplot(aes(x = time, y = bpm, fill = power)) +
-  geom_raster() +
-  scale_fill_viridis_c(guide = "none") +
-  labs(x = "Time (s)", y = "Tempo (BPM)", title = "LF SYSTEMS - Afraid to Feel") +
-  theme_classic()
-```
-
-***
-In the DJ world, the easiest method to mix two songs is to keep the tempo the same throughout the song. When this is not the case, it requires an advanced technique to mix the songs together. The tempo analysis features in the turntable are now no longer accurate because this currently gives an average value of the tempo over time rather than the tempo per section in the song. The DJ must be familiar with this change in tempo in order to mix the song correctly. An example of an outlier in the corpus is the song [Affraid to Feel by LF SYSTEM](https://open.spotify.com/track/40SBS57su9xLiE1WqkXOVr?si=3aa011c350324fad). The song was released on May 2, 2022. The song uses the sample from the song [I Can't Stop (Turning You On) by SILK](https://open.spotify.com/track/6la3A2IUZcuIH5tXOQWqxL?si=db8bfd669fd24641). This song has a tempo of 85 bpm. So for LF SYSTEM it was a challenge to incorporate the sample into a disco track with a tempo of 130 BPM. This is evident from the tempogram. The song starts slowly with a tempo of 100 BPM. After 20 seconds, the tempo increases to 130 BPM. This is when song switches from the intro to the chorus. What is not immediately clear is that after the chorus, the tempo drops slightly. After repeated listens, this became audible. From the tempogram it can be seen that after the first chorus, the chorus returns 2 more times. The last thing that stands out is that after about 150 seconds the tempo is classified as rapidly increasing. In the recording it can be heard that the kick drum changes from every four-quarter measure to every 8th measure. This makes the tempo seem to double but is not actually the case. It is the lead-up to the chorus. I myself tried to follow the tempo. See the video below for this. 
-
-<video width="320" height="170" controls>
-  <source src="VideoTap.mp4" type="video/mp4">
-</video>
 
 Introduction {data-icon="ion-ios-home"}
 =======================================================
@@ -96,10 +78,16 @@ Row {data-height=250}
 Row {data-height=1000}
 -------------------------------------------------------------------------
 ### Introduction
-This portfolio looks at the relationship between Spotify's Automix functionality and the musical corresponding mix components used in the DJ industry to smoothly transition songs. The automix playlists used for this portfolio are HouseWerk, TechnoBunker, Mint and Dance Rising. The music contained in the playlist is best classified under House music. In subcategory the Housewerk playlist contains techhouse, TechnoBunker techno, DanceRising and Mint dance pop. The interest in this comparison came from being a DJ myself. In the DJ world, mainly 2 components are used that are important for a transition between two songs. These are the tempo of the songs and the pitch (key) that the mixing songs are in. It will be investigated whether these components are also used by the automix functionality. This will focus on the order of the songs in the playlist. The shuffle functionality will be left out.  It may also turn out that the functionality is completely random. Looking at the HouseWerk playlist, the first analysis can be made of the songs that are in the playlist. What is immediately noticeable is that the songs occur mostly in the same tempo range. This is a tempo between 125 and 130 bpm (beats per minute). About the key, at first glance, it is difficult to make a statement. In general, tech house songs are mostly made in A minor. This makes overmixing in the same key easy. Later analysis will show whether the order of the songs in the playlist was determined explicitly in order to achieve a good transition.
+When hosting a party or event, having uninterrupted music with smooth transitions is crucial. The Spotify Automix fuctionality can be a good solution, although not all playlists are suitable for this feature. Spotify offers pre-programmed playlists that include the Automix functionality, but users must configure their settings correctly to use it. To learn how to set up Automix functionality properly, refer to this link.
 
-### How to mix two songs together? 
-Test
+Despite its benefits, Spotify's Automix functionality has some limitations compared to a regular DJ. Firstly, it lacks the complete experience of a DJ. Secondly, users cannot easily add songs to pre-programmed playlists. Lastly, there has been limited research on the techniques used by the Automix functionality in music studies. This raises the question of whether the techniques used by the Automix functionality are similar to those used by regular DJs or not.
+
+This portfolio investigates the relationship between Spotify's Automix functionality and the mix components used in the DJ industry for smooth song transitions.The Automix playlists used for this portfolio are HouseWerk, TechnoBunker, Mint and Dance Rising. The music contained in the playlist is best classified under House music. In subcategory the Housewerk playlist contains techhouse, TechnoBunker techno, DanceRising and Mint dance pop. The interest in this comparison came from being a DJ myself. In the DJ world, mainly 2 components are used that are important for a transition between two songs. These are the tempo of the songs and the key that the mixing songs are in. It will be investigated whether these components are also used by the automix functionality. This will focus on the order of the songs in the playlist. The shuffle functionality will be left out. It may also turn out that the functionality is completely random.
+
+### Picture
+```{r picture, echo = F, out.width = '100%'}
+knitr::include_graphics("dj_myself.jpg")
+```
 
 Tempo {data-navmenu="Important musical elements for analysis" data-icon="ion-ios-speedometer" .storyboard}
 =======================================================
@@ -134,6 +122,20 @@ ggplot(all_data, aes(x = number_order, y= tempo, color = playlist_name)) +
 ***
 The second visualization shows the progression of tempo over the playlist. On the x axis here the songs are numerically represented in playlist order. On the y axis, the tempo is shown. Also in this visualization it is noticeable that the playlists Housewerk and Technobunker have a better distribution of tempo compared to Dance Rising and Mint. In the latter playlists, the tempo is more dispersed.
 
+### Tempogram {data-commentary-width=400}
+```{r}
+affraid_to_feel <- get_tidy_audio_analysis("40SBS57su9xLiE1WqkXOVr")
+affraid_to_feel |>
+  tempogram(window_size = 8, hop_size = 1, cyclic = TRUE) |>
+  ggplot(aes(x = time, y = bpm, fill = power)) +
+  geom_raster() +
+  scale_fill_viridis_c(guide = "none") +
+  labs(x = "Time (s)", y = "Tempo (BPM)", title = "LF SYSTEMS - Afraid to Feel") +
+  theme_classic()
+```
+
+***
+In the DJ world, the easiest method to mix two songs is to keep the tempo the same throughout the song. When this is not the case, it requires an advanced technique to mix the songs together. The tempo analysis features in the turntable are now no longer accurate because this currently gives an average value of the tempo over time rather than the tempo per section in the song. The DJ must be familiar with this change in tempo in order to mix the song correctly. An example of an outlier in the corpus is the song [Affraid to Feel by LF SYSTEM](https://open.spotify.com/track/40SBS57su9xLiE1WqkXOVr?si=3aa011c350324fad). The song was released on May 2, 2022. The song uses the sample from the song [I Can't Stop (Turning You On) by SILK](https://open.spotify.com/track/6la3A2IUZcuIH5tXOQWqxL?si=db8bfd669fd24641). This song has a tempo of 85 bpm. So for LF SYSTEM it was a challenge to incorporate the sample into a disco track with a tempo of 130 BPM. This is evident from the tempogram. The song starts slowly with a tempo of 100 BPM. After 20 seconds, the tempo increases to 130 BPM. This is when song switches from the intro to the chorus. What is not immediately clear is that after the chorus, the tempo drops slightly. After repeated listens, this became audible. From the tempogram it can be seen that after the first chorus, the chorus returns 2 more times. The last thing that stands out is that after about 150 seconds the tempo is classified as rapidly increasing. In the recording it can be heard that the kick drum changes from every four-quarter measure to every 8th measure. This makes the tempo seem to double but is not actually the case. It is the lead-up to the chorus. I myself tried to follow the tempo. See the video below for this. 
 
 Key {data-navmenu="Important musical elements for analysis" data-icon="ion-key" .storyboard}
 =======================================================
@@ -395,6 +397,53 @@ ggplot(all_keys, aes(x = str_wrap(key, 5), y = n, fill = n)) +
 
 >This visualization shows the pitch of the different songs. The reason this visualization was chosen is because it is important for DJs to observe pitch when mixing songs. The outer ring shows the keys. The color and deflection of the bars shows the number of songs in this key. If the visualization shows that the songs have an even distribution across the key, this may mean that the key is observed when songs are mixed. In the visualization this can be clearly seen with the playlists Mint and Housewerk.
 
+Energy and Valence {data-navmenu="Important musical elements for analysis" data-icon="ion-android-happy"}
+=======================================================
+```{r}
+en_valplot <- all_data |>                    # Start with awards.
+  mutate(
+    mode = ifelse(mode == 0, "Minor", "Major")
+  ) |>
+  ggplot(                     # Set up the plot.
+    aes(
+      x = valence,
+      y = energy,
+      size = loudness,
+      colour = mode,
+      text = track.name
+    )
+  ) +
+  geom_point() +              # Scatter plot.
+  geom_rug(linewidth = 0.1) + # Add 'fringes' to show data distribution.
+  facet_wrap(~ playlist_name) +    # Separate charts per playlist.
+  scale_x_continuous(         # Fine-tune the x axis.
+    limits = c(0, 1),
+    breaks = c(0, 0.50, 1),   # Use grid-lines for quadrants only.
+    minor_breaks = NULL       # Remove 'minor' grid-lines.
+  ) +
+  scale_y_continuous(         # Fine-tune the y axis in the same way.
+    limits = c(0, 1),
+    breaks = c(0, 0.50, 1),
+    minor_breaks = NULL
+  ) +
+  scale_colour_brewer(        # Use the Color Brewer to choose a palette.
+    type = "qual",            # Qualitative set.
+    palette = "Paired"        # Name of the palette is 'Paired'.
+  ) +
+  scale_size_continuous(      # Fine-tune the sizes of each point.
+    trans = "exp",            # Use an exp transformation to emphasise loud.
+    guide = "none"            # Remove the legend for size.
+  ) +
+  theme_light() +             # Use a simpler theme.
+  labs(                       # Make the titles nice.
+    x = "Valence",
+    y = "Energy",
+    colour = "Mode"
+  )
+ggplotly(en_valplot)
+```
+> Tekst
+
 Chromograms {data-navmenu="Important musical elements for analysis" data-icon="ion-music-note"}
 =======================================================
 ```{r}
@@ -562,4 +611,219 @@ bind_rows(
 ***
 <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/1M8t1j3Kv2qp97bdq5q4Vl?utm_source=generator" width="100%" height="152" frameBorder="0" allowtransparency="true" allow="encrypted-media" data-external="1"></iframe>
 Looking at the second song, we look at the analysis of the song Tom Santa - Rainfall. This is a cover of the song Shackles released by Mary Mary. The song is in key 5, the tempo is 128 bpm and the energy is almost 0.9. Like the song by La Fuente, I analyze this song using the 3 characteristics of representation, novelty and homogeneity. Starting with representation, we see the diagonal dark lines a lot in the song. During the beginning of the song until 30 seconds it is clearly visible. Looking at the novelty, a large intersection can be found around 90 seconds. You can clearly hear the transition in the song. Lastly looking at the homogeneity, the chess boards are also well found in this song. Especially some smaller chessboards between 25 and 90 seconds. Because these are dark blue chessboards, the song changes a lot in this time interval
+
+Clustering {data-navmenu="Important musical elements for analysis" data-icon="ion-ios-keypad" .storyboard}
+=========================================================
+
+### Feature importance
+```{r}
+data_feature_analysis <-
+  bind_rows(
+    housewerk |> mutate(playlist = "Housewerk") |> slice_head(n = 20),
+    technobunker |> mutate(playlist = "Techno Bunker") |> slice_head(n = 20),
+    dance_rising |> mutate(playlist = "Dance Rising") |> slice_head(n = 20),
+    mint |> mutate(playlist = "mint") |> slice_head(n = 20)
+  ) |> 
+  add_audio_analysis()
+```
+
+```{r}
+indie_feature_analysis <-
+  data_feature_analysis |>  # For your portfolio, change this to the name of your corpus.
+  mutate(
+    playlist = factor(playlist),
+    segments = map2(segments, key, compmus_c_transpose),
+    pitches =
+      map(
+        segments,
+        compmus_summarise, pitches,
+        method = "mean", norm = "manhattan"
+      ),
+    timbre =
+      map(
+        segments,
+        compmus_summarise, timbre,
+        method = "mean",
+      )
+  ) |>
+  mutate(pitches = map(pitches, compmus_normalise, "clr")) |>
+  mutate_at(vars(pitches, timbre), map, bind_rows) |>
+  unnest(cols = c(pitches, timbre))
+```
+
+```{r}
+feature_analyis_recipe <-
+  recipe(
+    playlist ~
+      danceability +
+      energy +
+      loudness +
+      speechiness +
+      acousticness +
+      instrumentalness +
+      liveness +
+      valence +
+      tempo +
+      duration +
+      C + `C#|Db` + D + `D#|Eb` +
+      E + `F` + `F#|Gb` + G +
+      `G#|Ab` + A + `A#|Bb` + B +
+      c01 + c02 + c03 + c04 + c05 + c06 +
+      c07 + c08 + c09 + c10 + c11 + c12,
+    data = indie_feature_analysis           # Use the same name as the previous block.
+  ) |>
+  step_center(all_predictors()) |>
+  step_scale(all_predictors()) 
+```
+
+```{r}
+feature_analysis_cv <- indie_feature_analysis |> vfold_cv(10)
+```
+
+```{r}
+forest_model <-
+  rand_forest() |>
+  set_mode("classification") |> 
+  set_engine("ranger", importance = "impurity")
+feature_analysis_forest <- 
+  workflow() |> 
+  add_recipe(feature_analyis_recipe) |> 
+  add_model(forest_model) |> 
+  fit_resamples(
+    feature_analysis_cv, 
+    control = control_resamples(save_pred = TRUE)
+  )
+```
+
+
+```{r}
+feature_analysis_model <-
+  rand_forest() |>
+  set_mode("classification") |> 
+  set_engine("ranger", importance = "impurity")
+indie_forest <- 
+  workflow() |> 
+  add_recipe(feature_analyis_recipe) |> 
+  add_model(forest_model) |> 
+  fit_resamples(
+    feature_analysis_cv, 
+    control = control_resamples(save_pred = TRUE)
+  )
+```
+
+```{r}
+workflow() |> 
+  add_recipe(feature_analyis_recipe) |> 
+  add_model(feature_analysis_model) |> 
+  fit(indie_feature_analysis) |> 
+  pluck("fit", "fit", "fit") |>
+  ranger::importance() |> 
+  enframe() |> 
+  mutate(name = fct_reorder(name, value)) |> 
+  ggplot(aes(name, value)) + 
+  geom_col() + 
+  coord_flip() +
+  theme_minimal() +
+  labs(x = NULL, y = "Importance")
+```
+
+### Improvements by using clustering
+```{r}
+get_conf_mat <- function(fit) {
+  outcome <- .get_tune_outcome_names(fit)
+  fit |> 
+    collect_predictions() |> 
+    conf_mat(truth = outcome, estimate = .pred_class)
+}  
+
+get_pr <- function(fit) {
+  fit |> 
+    conf_mat_resampled() |> 
+    group_by(Prediction) |> mutate(precision = Freq / sum(Freq)) |> 
+    group_by(Truth) |> mutate(recall = Freq / sum(Freq)) |> 
+    ungroup() |> filter(Prediction == Truth) |> 
+    select(class = Prediction, precision, recall)
+} 
+```
+
+```{r}
+housewerk_clust <-
+  get_playlist_audio_features("housewerk", "37i9dQZF1DXa8NOEUWPn9W") |>
+  slice_head(n = 20) |>
+  add_audio_analysis() |>
+  mutate(
+    segments = map2(segments, key, compmus_c_transpose),
+    pitches =
+      map(segments,
+        compmus_summarise, pitches,
+        method = "mean", norm = "manhattan"
+      ),
+    timbre =
+      map(
+        segments,
+        compmus_summarise, timbre,
+        method = "mean"
+      )
+  ) |>
+  mutate(pitches = map(pitches, compmus_normalise, "clr")) |>
+  mutate_at(vars(pitches, timbre), map, bind_rows) |>
+  unnest(cols = c(pitches, timbre))
+```
+
+```{r}
+housewerk_juice <-
+  recipe(
+    track.name ~
+      danceability +
+      energy +
+      loudness +
+      speechiness +
+      acousticness +
+      instrumentalness +
+      liveness +
+      valence +
+      tempo +
+      duration +
+      C + `C#|Db` + D + `D#|Eb` +
+      E + `F` + `F#|Gb` + G +
+      `G#|Ab` + A + `A#|Bb` + B +
+      c01 + c02 + c03 + c04 + c05 + c06 +
+      c07 + c08 + c09 + c10 + c11 + c12,
+    data = housewerk_clust
+  ) |>
+  step_center(all_predictors()) |>
+  step_scale(all_predictors()) |> 
+  # step_range(all_predictors()) |> 
+  prep(housewerk_clust |> mutate(track.name = str_trunc(track.name, 20))) |>
+  juice() |>
+  column_to_rownames("track.name")
+```
+
+```{r}
+housewerk_dist <- dist(housewerk_juice, method = "euclidean")
+housewerk_dist |> 
+  hclust(method = "average") |> # Try single, average, and complete.
+  dendro_data() |>
+  ggdendrogram()
+```
+
+### Heatmap 
+```{r}
+heatmaply(
+  housewerk_juice,
+  hclustfun = hclust,
+  hclust_method = "average",  # Change for single, average, or complete linkage.
+  dist_method = "euclidean"
+)
+```
+
+***
+Explenation
+
+Conclusion {data-navmenu="Important musical elements for analysis" data-icon="ion-clipboard"}
+=========================================================
+
+
+
+
 
