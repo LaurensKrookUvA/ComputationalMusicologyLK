@@ -84,14 +84,14 @@ Despite its benefits, Spotify's Automix functionality has some limitations compa
 
 This portfolio investigates the relationship between Spotify's Automix functionality and the mix components used in the DJ industry for smooth song transitions.The Automix playlists used for this portfolio are HouseWerk, TechnoBunker, Mint and Dance Rising. The music contained in the playlist is best classified under House music. In subcategory the Housewerk playlist contains techhouse, TechnoBunker techno, DanceRising and Mint dance pop. The interest in this comparison came from being a DJ myself. In the DJ world, mainly 2 components are used that are important for a transition between two songs. These are the tempo of the songs and the key that the mixing songs are in. It will be investigated whether these components are also used by the automix functionality. This will focus on the order of the songs in the playlist. The shuffle functionality will be left out. It may also turn out that the functionality is completely random.
 
-### Picture
+### Picture of me behind the decks
 ```{r picture, echo = F, out.width = '100%'}
 knitr::include_graphics("dj_myself.jpg")
 ```
 
 Tempo {data-navmenu="Important musical elements for analysis" data-icon="ion-ios-speedometer" .storyboard}
 =======================================================
-### Tempo of the songs in the playlist
+### How is the tempo distributed in the playlists?
 ```{r}
 #Boxplot
 tempoplot <-ggplot(all_data, aes(x = playlist_name, y = tempo, color = playlist_name)) + 
@@ -106,8 +106,10 @@ ggplotly(tempoplot)
 
 ***
 The first visualization shows the distribution over tempo of the songs within the different playlists. In the visualization below, the x axis shows the different playlists. On the y axis, the tempo is visible. If we look closely at the visualization we see that the playlist Technobunker has a high median compared to the other playlists. There are also the fewest outliers here compared to the other playlists. The spread of Housewerk is the smallest. This means that the tempo in this playlist is mostly close to the median. This is a positive first analysis on the research question.
+<br>
+The outliers negatively affect overmixing. At least on a basic level of mixing. From the DJ industry, songs with a maximum tempo difference of 6 bpm can be mixed. A so-called Master Tempo function on the turntable ensures that the key does not change at that moment. See a helpful explainer [video](https://www.youtube.com/watch?v=azZTKcBZsRw) here. When the tempo difference is greater than 6 bpm, the listener will clearly hear the difference in tempo. A possible solution to compensate for the large bpm difference is to use tempo harmonics and subharmonics. For example, a 120 BPM song can be mixed with the 60 BPM subharmonic. In the following visualization it is examined whether this is used.
 
-### Tempo of the songs in order of playlists
+### How does the tempo behave throughout the playlist?
 ```{r}
 ggplot(all_data, aes(x = number_order, y= tempo, color = playlist_name)) + 
   geom_line() +
@@ -120,9 +122,11 @@ ggplot(all_data, aes(x = number_order, y= tempo, color = playlist_name)) +
 ```
 
 ***
-The second visualization shows the progression of tempo over the playlist. On the x axis here the songs are numerically represented in playlist order. On the y axis, the tempo is shown.  The figures are analyzed by playlist. The first figure shows a wide range of tempos. 
+The second visualization shows the progression of tempo over the playlist. On the x axis here the songs are numerically represented in playlist order. On the y axis, the tempo is shown. The figures are analyzed by playlist. The second visualization complements the first visualization well. Both figures clearly show that Dance Rising and mint have the most outliers. Looking at the order, the technique of subharmonics (as discussed on the previous page) is probably used once. In the dance rising playlist this can be seen in around track 45 and 46. The tempo difference between track 45 (80 bpm) and track 46 (160 bpm). Unfortunately, in cases of the large tempo difference, this technique is not used more often. We can therefore already draw a first conclusion that in these cases the transitions in terms of tempo are random.
+<br>
+The best build in tempo can be seen in the technobunker playlist. In this visualization, the pace is clearly building and decreasing. There are few peaks in the visualization, which means that techniques such as subharmonics are not applicable. This is positive for the transitions
 
-### Tempogram {data-commentary-width=400}
+### An outlier that makes the transition complicated even for a regular DJ. {data-commentary-width=400}
 ```{r}
 affraid_to_feel <- get_tidy_audio_analysis("40SBS57su9xLiE1WqkXOVr")
 affraid_to_feel |>
@@ -135,7 +139,7 @@ affraid_to_feel |>
 ```
 
 ***
-In the DJ world, the easiest method to mix two songs is to keep the tempo the same throughout the song. When this is not the case, it requires an advanced technique to mix the songs together. The tempo analysis features in the turntable are now no longer accurate because this currently gives an average value of the tempo over time rather than the tempo per section in the song. The DJ must be familiar with this change in tempo in order to mix the song correctly. An example of an outlier in the corpus is the song [Affraid to Feel by LF SYSTEM](https://open.spotify.com/track/40SBS57su9xLiE1WqkXOVr?si=3aa011c350324fad). The song was released on May 2, 2022. The song uses the sample from the song [I Can't Stop (Turning You On) by SILK](https://open.spotify.com/track/6la3A2IUZcuIH5tXOQWqxL?si=db8bfd669fd24641). This song has a tempo of 85 bpm. So for LF SYSTEM it was a challenge to incorporate the sample into a disco track with a tempo of 130 BPM. This is evident from the tempogram. The song starts slowly with a tempo of 100 BPM. After 20 seconds, the tempo increases to 130 BPM. This is when song switches from the intro to the chorus. What is not immediately clear is that after the chorus, the tempo drops slightly. After repeated listens, this became audible. From the tempogram it can be seen that after the first chorus, the chorus returns 2 more times. The last thing that stands out is that after about 150 seconds the tempo is classified as rapidly increasing. In the recording it can be heard that the kick drum changes from every four-quarter measure to every 8th measure. This makes the tempo seem to double but is not actually the case. It is the lead-up to the chorus. I myself tried to follow the tempo. See the video below for this. 
+In the DJ world, the easiest method to mix two songs is to keep the tempo the same throughout the song. When this is not the case, it requires an advanced technique to mix the songs together. The tempo analysis features in the turntable are now no longer accurate because this currently gives an average value of the tempo over time rather than the tempo per section in the song. The DJ must be familiar with this change in tempo in order to mix the song correctly. An example of an outlier in the corpus is the song [Affraid to Feel by LF SYSTEM](https://open.spotify.com/track/40SBS57su9xLiE1WqkXOVr?si=3aa011c350324fad). The song was released on May 2, 2022. The song uses the sample from the song [I Can't Stop (Turning You On) by SILK](https://open.spotify.com/track/6la3A2IUZcuIH5tXOQWqxL?si=db8bfd669fd24641). This song has a tempo of 85 bpm. So for LF SYSTEM it was a challenge to incorporate the sample into a disco track with a tempo of 130 BPM. This is evident from the tempogram. The song starts slowly with a tempo of 100 BPM. After 20 seconds, the tempo increases to 130 BPM. This is when song switches from the intro to the chorus. What is not immediately clear is that after the chorus, the tempo drops slightly. After repeated listens, this became audible. From the tempogram it can be seen that after the first chorus, the chorus returns 2 more times. The last thing that stands out is that after about 150 seconds the tempo is classified as rapidly increasing. In the recording it can be heard that the kick drum changes from every four-quarter measure to every 8th measure. This makes the tempo seem to double but is not actually the case. It is the lead-up to the chorus. 
 
 Key {data-navmenu="Important musical elements for analysis" data-icon="ion-key" .storyboard}
 =======================================================
@@ -188,7 +192,7 @@ gauge(mint_key_count_value, min = 0, max = 76,
 
 > Count songs mixed correctly
 
-### Good Transition
+### What does a good sounding transition look like?
 ```{r, echo=FALSE}
 circshift <- function(v, n) {
   if (n == 0) v else c(tail(v, n), head(v, -n))
@@ -322,7 +326,7 @@ get_tidy_audio_analysis("6KCmJ8VI6VYNRNubSqi0Ck") |>
 
 >For this portfolio, it is necessary to look at the interrelationship between the songs within the playlist. This can be used to find out if spotify uses the "mix in key" technique. For this analysis, 2 songs were used. The first song is the song Bel Mercy written by Jengi. The second song used is Lennon written by ESSEL. The relationship in terms of key between the songs is compared in this storyboard page. Starting with Bel Mercy, it is visible that this song is written in C#m. What also stands out in the visualization is the yellow vertical bar. This is created by the drums that can be heard in the foreground after 25 seconds. These are not audible earlier in the song. Looking at the second song, we see that it is written in F#m. With the circle of fifth's knowledge in mind, we know that a good transition can be made between C#m and F#m. This transition in the playlist can be considered a good transition. 
 
-### Bad Transition
+### Transitions can also be bad
 ```{r, echo = FALSE}
 par(mfrow = c(1,2))
 
@@ -369,7 +373,7 @@ get_tidy_audio_analysis("1ZNaOGKAZKaZh7V87zDs1i") |>
 
 >Looking at a bad transition, two songs were used here as well.  The first song is the song Rhyme Dust written by MK and Dom Dolla. The second song used is Colourblind written by Jess Bays and Harley May. Looking at the first song we see Cm and G major very dark. A very slight difference. In my opinion the G major is slightly darker anyway which is probably why this song was written in this pitch. Again, after about 130 seconds we see a vertical yellow bar. Less obvious as in the song Bel Mercy but still it can be distinguished. Also in this song we see that this is caused by the the drums, more specifically the kick drum. Looking at the second song we see that C# minus is very dark. With our knowledge of the circle of fifth's and fourth's in mind, we see that this is not a good transition.
 
-### Number of songs with same key
+### How does the key relate to the playlists?
 ```{r}
 keys_housewerk <- housewerk |>
   count(key) |>
@@ -414,7 +418,7 @@ In conclusion, we can say that most playlists have high energy and distributed v
 
 Column
 --------------------------------------------------------
-### Valence, Energy, Loudness and mode
+### Can valence, energy, loudness and mode give an unexpected addition?
 ```{r}
 en_valplot <- all_data |>                    # Start with awards.
   mutate(
@@ -524,7 +528,7 @@ second_song |>
 
 Similarity Matrix {data-navmenu="Important musical elements for analysis" data-icon="ion-android-contacts" .storyboard}
 =========================================================
-### La Fuente - I Want You
+### La Fuente - I Want You, An interesting homogeneity pattern
 ```{r}
 bzt <-
   get_tidy_audio_analysis("4s8BpmFtxDgeCoPj2XHtVj") |>
@@ -577,7 +581,7 @@ bind_rows(
 Above are the similairty matrices of the chroma features (left) and timbre (right). The song chosen is La Fuente - I Want You. The song is in key 8, the tempo is 125 bpm and energy is 0.8. We analyze the figure using 3 criteria. Representation (shows the repeating elements with diagonal sloping lines), novelty (bright yellow lines when a part is not similar and dark lines when it is) and lastly homogeneity (A so-called chessboard that when it is dark blue shows that everything is similar and when it is more yellow more difference). Starting with the representation, it is difficult to find the diagonal lines. They can be seen very slightly at the end of the song Looking at the novelty, it is clear that the song has 2 refrains. These are the intersections of the yellow lines around 40 and 190 seconds. At that point the song changes tremendously. Looking last at the homogeneity, the chessboards are mainly found between 50 and 100 seconds. 
 
 
-### Tom Santa - Rainfall
+### Tom Santa - Rainfall, Checkerboards everywhere
 ```{r}
 bzt <-
   get_tidy_audio_analysis("1M8t1j3Kv2qp97bdq5q4Vl") |>
@@ -632,7 +636,7 @@ Looking at the second song, we look at the analysis of the song Tom Santa - Rain
 Clustering {data-navmenu="Important musical elements for analysis" data-icon="ion-ios-keypad" .storyboard}
 =========================================================
 
-### Feature importance
+### Which features are important for improving mixing?
 ```{r}
 data_feature_analysis <-
   bind_rows(
@@ -830,8 +834,9 @@ housewerk_dist |>
 ***
 To improve the number of good transitions, I want to show a possible solution using clustering to better determine the order of the playlist. The best features from previous page (tempo and c6) were used to create this clustering. Single linkage was chosen where the smallest distance between clusters is calculated. The choice of this form has two reasons. First, outliers can then be discovered first. These songs can then potentially be used at the beginning of the playlist because the user starts the song at that point. Second, clusters are now created where the distance between songs is smallest. An order of songs in the playlist can now be easily created.
 
-Conclusion {data-icon="ion-clipboard"}
+Conclusion and Discussion{data-icon="ion-clipboard"}
 =========================================================
+### Conclusion
 The conclusion summarizes the results and answers the research question posed in the introduction. 
 <br>
 The introduction introduced the research question: "Does the spotify automix functionality use the same techniques as a regular DJ?". In this portfolio, visualizations were used to try to answer this question. 
@@ -847,4 +852,15 @@ The Chromograms showed that by eye it is very difficult to tell which chords wer
 The similarity matrices were interesting. It was clear from the first figure that La Fuente's song I Want You contained multiple choruses but representation was difficult to see. In contrast, the second visualization showed more insight on novelty. The visualizations showed good insight into repetitions and changes in the song. The visualizations did not have a major impact on answering the research question but showed good insights. 
 <br>
 The last visualizations in this portfolio regarding the clustering summarize the experiences made in the portfolio. The portfolio showed that the most information regarding the research question could be obtained from the tempo and key components. As mentioned earlier in this conclusion, the transitions made by Spotify's Automix functionality are not yet optimal. By means of clustering a method is shown how feature selection and tree's can be used to adjust the order within the playlist in order to improve the number of transitions.
+
+To summarize, we can answer the research question. The tempo and key features show that Spotify makes little use of these features to overmix the songs. A limited number of songs are overmixed well, but that could also be a coincidence. Track popularity will probably have a heavier consideration in the order in which spotify delivers the playlist.In addition, it has also been found that features such as mode, loudness, energy and valence can tell little about the overmix technique. However, these features have provided more insight into the data. From the clustering visualizations, spotify can make a consideration to improve the transitions and enhance the listener's listening experience.
+
+### Discussion 
+There are a number of discussion points that need to be discussed.
+
+First, the playlist changed over time. Since these were not their own playlists, Spotify changed the playlist every week. As a result, the research result has changed slightly several times. However, the changes are not worth mentioning because most songs remained in the playlist and a single new song was added.
+
+Secondly, Spotify is all about the popularity of a playlist and less about the automix functionality. As a result, the quality of the transitions will weigh less heavily. Spotify may be able to expand playlists where the transition is more important.
+
+Finally, this research was done on only 4 Spotify playlists. For a higher reliability and a more diverse answer, this research could be repeated on the other playlists that contain this functionality.
 
