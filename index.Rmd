@@ -120,7 +120,7 @@ ggplot(all_data, aes(x = number_order, y= tempo, color = playlist_name)) +
 ```
 
 ***
-The second visualization shows the progression of tempo over the playlist. On the x axis here the songs are numerically represented in playlist order. On the y axis, the tempo is shown. Also in this visualization it is noticeable that the playlists Housewerk and Technobunker have a better distribution of tempo compared to Dance Rising and Mint. In the latter playlists, the tempo is more dispersed.
+The second visualization shows the progression of tempo over the playlist. On the x axis here the songs are numerically represented in playlist order. On the y axis, the tempo is shown.  The figures are analyzed by playlist. The first figure shows a wide range of tempos. 
 
 ### Tempogram {data-commentary-width=400}
 ```{r}
@@ -399,6 +399,22 @@ ggplot(all_keys, aes(x = str_wrap(key, 5), y = n, fill = n)) +
 
 Energy and Valence {data-navmenu="Important musical elements for analysis" data-icon="ion-android-happy"}
 =======================================================
+### {.sidebar data-width=400}
+-------------------------------------------------------
+In the visualizations above, a number of variables are plotted for each playlist. On the x-axis the valence (range 0 to 1), on the y-axis the energy (also a range of 0 to 1), the size of the dots represented the loudness (-60dB to 0 db). Finally, the color distinction distinguishes between major and minor. Since this is an interactive visualization, when hovering over the dots, the name of the specific numbers can be found. The plots are analyzed one by one. 
+<br> 
+Starting with the Dance Rising playlist, one notices that the energy does not go below 0.46. In this area, no outliers can be found in this playlist. Most of the songs are between the energy range of 0.6-1. The valence distribution is very divided. It varies mainly between 0 and 0.9. The loudness is similar for most songs. Nevertheless, one outlier stands out. This is the song Where do we go by Dimension and Poppy Baskcomb. After listening to this song, there are many high notes in it and the singer sings very high and loud. This explains the outlier compared to the other songs in this playlist. The distribution major/minor is scattered. 
+<br> 
+The visualization to the right of this concerns the playlist Housework. Here there is no song with an energy lower than 0.5. The valence is very scattered. There are no further outliers to be found in terms of loudness and mode. It is noticeable that the data points are more clipped than the first visualization discussed. 
+<br> 
+The third visualization (bottom left) concerns the playlist mint. Compared to all other playlists, the data points here are the most scattered. The energy varies over a broader domain. The valence is scattered though most data points are below a range of 0.8. Again, the loudness and mode show no outliers. 
+<br> 
+Finally, the TechnoBunker playlist is analyzed. Immediately visible is that the data points are very clustered at the top left of the figure. Compared to the other playlists, the valence is much lower and does not exceed 0.7. This can be explained because techno songs often have an industrial dark atmosphere.  In this visualization it is relatively easy to see that there are more songs in major than minor. The loudness shows no outliers. 
+In conclusion, we can say that most playlists have high energy and distributed valence with the exception of the techno bunker playlist. The mode and loudness shows no outliers in most cases.
+
+Column
+--------------------------------------------------------
+### Valence, Energy, Loudness and mode
 ```{r}
 en_valplot <- all_data |>                    # Start with awards.
   mutate(
@@ -442,7 +458,8 @@ en_valplot <- all_data |>                    # Start with awards.
   )
 ggplotly(en_valplot)
 ```
-> Tekst
+
+
 
 Chromograms {data-navmenu="Important musical elements for analysis" data-icon="ion-music-note"}
 =======================================================
@@ -727,6 +744,9 @@ workflow() |>
   labs(x = NULL, y = "Importance")
 ```
 
+***
+Using random forest, an attempt was made to obtain the most important features from the playlists. Due to the size of the playlists, the decision was made to focus only on the first 20 songs of each playlist. In order to get an overall view, the choice was made to use as many features as possible. The visualization shows that tempo is most important. This meets the expectations. What is interesting is that the 6th coefficient of the timbre vector is almost as important as tempo. It is difficult to determine what the 6th dimension of the timbre vector means. The documentation on this vector is quite limited. The rest of the features decrease gradually. 
+
 ### Improvements by using clustering
 ```{r}
 get_conf_mat <- function(fit) {
@@ -748,7 +768,7 @@ get_pr <- function(fit) {
 
 ```{r}
 housewerk_clust <-
-  get_playlist_audio_features("housewerk", "37i9dQZF1DXa8NOEUWPn9W") |>
+  get_playlist_audio_features("mint", "37i9dQZF1DX4dyzvuaRJ0n") |>
   slice_head(n = 20) |>
   add_audio_analysis() |>
   mutate(
@@ -802,28 +822,29 @@ housewerk_juice <-
 ```{r}
 housewerk_dist <- dist(housewerk_juice, method = "euclidean")
 housewerk_dist |> 
-  hclust(method = "average") |> # Try single, average, and complete.
+  hclust(method = "single") |> # Try single, average, and complete.
   dendro_data() |>
   ggdendrogram()
 ```
 
-### Heatmap 
-```{r}
-heatmaply(
-  housewerk_juice,
-  hclustfun = hclust,
-  hclust_method = "average",  # Change for single, average, or complete linkage.
-  dist_method = "euclidean"
-)
-```
-
 ***
-Explenation
+To improve the number of good transitions, I want to show a possible solution using clustering to better determine the order of the playlist. The best features from previous page (tempo and c6) were used to create this clustering. Single linkage was chosen where the smallest distance between clusters is calculated. The choice of this form has two reasons. First, outliers can then be discovered first. These songs can then potentially be used at the beginning of the playlist because the user starts the song at that point. Second, clusters are now created where the distance between songs is smallest. An order of songs in the playlist can now be easily created.
 
-Conclusion {data-navmenu="Important musical elements for analysis" data-icon="ion-clipboard"}
+Conclusion {data-icon="ion-clipboard"}
 =========================================================
-
-
-
-
+The conclusion summarizes the results and answers the research question posed in the introduction. 
+<br>
+The introduction introduced the research question: "Does the spotify automix functionality use the same techniques as a regular DJ?". In this portfolio, visualizations were used to try to answer this question. 
+<br>
+Starting with the visualizations on tempo. From the visualizations, it can be seen that the Dance Rising and mint playlist contain the most outliers in terms of tempo. This negatively effects the overmixing of the songs. Housework and Technobunker are the same in terms of tempo. The songs are in the same tempo range and few outliers can be found there. In addition, there is a single song that makes the transition tremendously difficult as seen in the last visualization in terms of tempo. In the song Affraid to feel by LF SYTEMS, the tempo chart showed that the song consists of different tempos that does not make the transition to another song easier.
+<br>
+In the visuals about key, the first insight was generated into how many songs were properly over-mixed based on key. This number was low for all four playlists. Using one example, a good transition was shown and using another example, a bad transition was shown. Using the circle of fifth's, the difference between a good and a bad transition became easily visible. 
+<br>
+From the energy and valence figure, it could be seen that the playlists are very energetic and the valence is very scattered. From the loudness, few outliers could be found. The biggest finding found in this visualization is that the technobunker playlist consists primarily of songs in major. 
+<br>
+The Chromograms showed that by eye it is very difficult to tell which chords were used in songs. Therefore, the least data was obtained from this to answer the research question. 
+<br>
+The similarity matrices were interesting. It was clear from the first figure that La Fuente's song I Want You contained multiple choruses but representation was difficult to see. In contrast, the second visualization showed more insight on novelty. The visualizations showed good insight into repetitions and changes in the song. The visualizations did not have a major impact on answering the research question but showed good insights. 
+<br>
+The last visualizations in this portfolio regarding the clustering summarize the experiences made in the portfolio. The portfolio showed that the most information regarding the research question could be obtained from the tempo and key components. As mentioned earlier in this conclusion, the transitions made by Spotify's Automix functionality are not yet optimal. By means of clustering a method is shown how feature selection and tree's can be used to adjust the order within the playlist in order to improve the number of transitions.
 
